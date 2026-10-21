@@ -1,0 +1,11 @@
+services:
+  jerusalen-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jerusalen-srl-app
+    restart: always
+    ports:
+      - "3030:80"
+    environment:
+      - NODE_ENV=production
