@@ -15,7 +15,7 @@ import { ErrorHttp } from './util.js'
 export function crearApp(db, { estaticos = config.servirEstaticos } = {}) {
   const app = express()
   app.disable('x-powered-by')
-  app.set('trust proxy', 'loopback')
+  app.set('trust proxy', ['loopback', 'uniquelocal']) // túnel en el host + red de Docker
   app.use(express.json({ limit: '2mb' }))
   app.use(cookieParser())
 

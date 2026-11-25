@@ -22,7 +22,7 @@ npm start            # http://localhost:3100  (ERP en /, panel del dueño en /du
 
 En el primer arranque se carga sola la **demo** con datos bolivianos realistas. Para volver a empezar de cero: `npm run demo:reiniciar`.
 
-**Usuarios de la demo** (clave `jerusalen2026`):
+**Usuarios de la demo** (clave `jerusalen2026`): En erpj.cerice360.com la clave y el PIN son otros (variables CLAVE_DEMO y PIN_DEMO en Coolify).
 
 | Correo | Rol |
 |---|---|

@@ -1,17 +1,20 @@
-# docker compose up -d --build
+# ERP Jerusalén (versión B) — Coolify, build pack docker compose.
+# Túnel de Cloudflare: erpj.cerice360.com -> 127.0.0.1:8110, adminj.cerice360.com -> 127.0.0.1:8111
+# (el servidor decide por el dominio: adminj.* sirve el panel del dueño). 8112 = API sin dominio propio.
 services:
   erp-jerusalen:
     build: .
-    container_name: erp-jerusalen
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3100:3100"   # solo local: nginx / el túnel publica erpj y adminj
+      - '127.0.0.1:8110:3100'
+      - '127.0.0.1:8111:3100'
+      - '127.0.0.1:8112:3100'
     environment:
-      - PORT=3100
-      - DATA_DIR=/datos
-      - FECHA_HOY=2026-11-25      # demo; quitar con datos reales
-      - COOKIE_SEGURA=1           # detrás de HTTPS
-      - CLAVE_DEMO=${CLAVE_DEMO:-jerusalen2026}
-      - PIN_DEMO=${PIN_DEMO:-2580}
+      PORT: 3100
+      DATA_DIR: /datos
+      FECHA_HOY: ${FECHA_HOY:-2026-11-25}
+      COOKIE_SEGURA: 1
+      CLAVE_DEMO: ${CLAVE_DEMO:?falta CLAVE_DEMO}
+      PIN_DEMO: ${PIN_DEMO:?falta PIN_DEMO}
     volumes:
       - /mnt/disco-lento/jerusalen:/datos

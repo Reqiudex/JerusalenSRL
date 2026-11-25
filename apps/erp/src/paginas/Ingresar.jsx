@@ -44,10 +44,10 @@ export default function Ingresar({ alIngresar }) {
         <p className="suave" style={{ fontSize: 13, margin: 0 }}>Don Emiliano entra con su PIN en el <a href="/dueno/">panel del dueño</a>.</p>
         <details className="usuarios-demo">
           <summary>Usuarios de la demo</summary>
-          <p>Clave de todos: <code>jerusalen2026</code></p>
+          <p>Pide la clave de la demo a CERICE 360.</p>
           <ul>
             {DEMO.map(([c, r]) => (
-              <li key={c}><button type="button" onClick={() => { setEmail(c); setClave('jerusalen2026') }}>{c}</button> — {r}</li>
+              <li key={c}><button type="button" onClick={() => setEmail(c)}>{c}</button> — {r}</li>
             ))}
           </ul>
         </details>
