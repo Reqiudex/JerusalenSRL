@@ -1,21 +1,28 @@
 {
-  "name": "jerusalen-marble",
+  "name": "jerusalen-erp",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "type": "commonjs",
   "scripts": {
+    "start": "node server.js",
     "dev": "vite",
     "build": "vite build",
+    "seed": "node api/seed.js",
+    "reset": "node api/seed.js --reset",
+    "test": "node tests/erp.test.js",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "11.3.0",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.9",
-    "lucide-react": "^1.59.0",
+    "lucide-react": "0.460.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "xlsx": "^0.18.5"
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
