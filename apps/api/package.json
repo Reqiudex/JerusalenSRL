@@ -1,0 +1,21 @@
+{
+  "name": "@jerusalen/api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/servidor.js",
+  "scripts": {
+    "start": "node src/servidor.js",
+    "dev": "node --watch src/servidor.js",
+    "reiniciar": "node src/semilla.js --reiniciar",
+    "clave": "node src/clave.js"
+  },
+  "dependencies": {
+    "@jerusalen/matriz-corte": "1.0.0",
+    "@jerusalen/reportes": "1.0.0",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.10.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2"
+  }
+}

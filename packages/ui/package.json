@@ -1,0 +1,3 @@
+{ "name": "@jerusalen/ui", "private": true, "version": "1.0.0", "type": "module",
+  "exports": { ".": "./src/index.js", "./formatos": "./src/formatos.js", "./tema.css": "./src/tema.css" },
+  "peerDependencies": { "react": ">=18" } }

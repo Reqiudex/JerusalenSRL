@@ -1,0 +1,22 @@
+{
+  "name": "jerusalen-erp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ERP Jerusalén S.R.L. — marmolería (Santa Cruz, Bolivia): API + ERP (erpj) + panel del dueño (adminj)",
+  "type": "module",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev:api": "npm run dev -w @jerusalen/api",
+    "dev:erp": "npm run dev -w @jerusalen/erp",
+    "dev:dueno": "npm run dev -w @jerusalen/dueno",
+    "build": "npm run build -w @jerusalen/erp && npm run build -w @jerusalen/dueno",
+    "start": "npm start -w @jerusalen/api",
+    "demo:reiniciar": "npm run reiniciar -w @jerusalen/api",
+    "test": "vitest run",
+    "lint": "oxlint apps packages"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
+  "engines": { "node": ">=20" }
+}

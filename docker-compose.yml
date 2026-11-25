@@ -1,0 +1,17 @@
+# docker compose up -d --build
+services:
+  erp-jerusalen:
+    build: .
+    container_name: erp-jerusalen
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3100:3100"   # solo local: nginx / el túnel publica erpj y adminj
+    environment:
+      - PORT=3100
+      - DATA_DIR=/datos
+      - FECHA_HOY=2026-11-25      # demo; quitar con datos reales
+      - COOKIE_SEGURA=1           # detrás de HTTPS
+      - CLAVE_DEMO=${CLAVE_DEMO:-jerusalen2026}
+      - PIN_DEMO=${PIN_DEMO:-2580}
+    volumes:
+      - /mnt/disco-lento/jerusalen:/datos
