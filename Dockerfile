@@ -1,32 +1,26 @@
-# Etapa 1: Build de la aplicación con Node.js
-FROM node:20-alpine AS builder
+# Dockerfile — ERP Jerusalén S.R.L. (erpj.cerice360.com y adminj.cerice360.com)
+FROM node:22-bookworm-slim
+
+# Herramientas de compilación por si better-sqlite3 requiere compilarse
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
+# Instalar dependencias y compilar el frontend React (apps/erp + apps/dueno)
 COPY package*.json ./
+RUN npm install --no-audit --no-fund
 
-# Instalar dependencias
-RUN npm install
-
-# Copiar el código fuente
 COPY . .
-
-# Compilar proyecto optimizado para producción
 RUN npm run build
 
-# Etapa 2: Servidor web ligero NGINX para producción
-FROM nginx:alpine
+# Volumen persistente para SQLite (montar /mnt/disco-lento/jerusalen en /app/data)
+VOLUME ["/app/data"]
 
-# Copiar configuración personalizada de Nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY security-headers.conf /etc/nginx/conf.d/security-headers.conf
+ENV NODE_ENV=production
+ENV PORT=3030
+ENV DATA_DIR=/app/data
 
-# Copiar el build compilado desde la etapa anterior
-COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 3030
 
-# Exponer el puerto estándar
-EXPOSE 80
-
-# Iniciar servidor Nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]

@@ -13,6 +13,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'jerusalen2026';
 const DUENO_PIN = process.env.DUENO_PIN || '1954';
 
 function resetAll() {
+  db.pragma('foreign_keys = OFF');
   const tablas = [
     'movimientos_contables',
     'retazos',
@@ -35,6 +36,12 @@ function resetAll() {
   for (const t of tablas) {
     db.exec(`DELETE FROM ${t};`);
   }
+  try {
+    db.exec("DELETE FROM sqlite_sequence;");
+  } catch (_) {
+    /* ignore */
+  }
+  db.pragma('foreign_keys = ON');
 }
 
 function seed(forceReset = RESET) {

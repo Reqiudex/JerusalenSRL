@@ -313,7 +313,7 @@ router.post('/proformas/:id/convertir', exigirRol('administrador', 'vendedor', '
         it.subtotal_bs
       );
       if (it.material_id) {
-        db.prepare('UPDATE materiales SET stock = MAX(0, stock - ?) WHERE id = ?').run(it.cantidad, it.material_id);
+        db.prepare('UPDATE materiales SET stock = CASE WHEN stock - ? > 0 THEN stock - ? ELSE 0 END WHERE id = ?').run(it.cantidad, it.cantidad, it.material_id);
       }
     }
 
@@ -445,7 +445,7 @@ router.post('/ventas', exigirRol('administrador', 'vendedor', 'contador'), (req,
     for (const it of itemsCalc) {
       insVI.run(venta_id, it.material_id, it.tipo_item, it.descripcion, it.cantidad, it.m2, it.precio_unit_bs, it.costo_unit_bs, it.subtotal_bs);
       if (it.material_id) {
-        db.prepare('UPDATE materiales SET stock = MAX(0, stock - ?) WHERE id = ?').run(it.cantidad, it.material_id);
+        db.prepare('UPDATE materiales SET stock = CASE WHEN stock - ? > 0 THEN stock - ? ELSE 0 END WHERE id = ?').run(it.cantidad, it.cantidad, it.material_id);
       }
     }
 
@@ -537,7 +537,6 @@ router.get('/produccion', (req, res) => {
     ORDER BY p.fecha DESC, p.id DESC
   `).all();
 
-  // Producción por producto (m2 cortados/colocados por período)
   const porProducto = db.prepare(`
     SELECT
       COALESCE(m.nombre, vi.descripcion) AS producto,
@@ -693,12 +692,10 @@ router.post('/cortes', exigirRol('administrador', 'cortador'), (req, res) => {
 
     const corteId = info.lastInsertRowid;
 
-    // Si se cortó un retazo previo, marcarlo como reutilizado
     if (b.retazo_origen_id) {
       db.prepare("UPDATE retazos SET estado = 'reutilizado' WHERE id = ?").run(b.retazo_origen_id);
     }
 
-    // Cada rectángulo marcado como 'retazo' pasa al inventario de retazos reutilizables
     const insRet = db.prepare(`
       INSERT INTO retazos (
         codigo, sucursal_id, plancha_corte_id, material_id, material_nombre,
@@ -869,7 +866,6 @@ router.get('/contabilidad', (req, res) => {
   const egresos_bs = r2(movimientos.filter(m => m.tipo === 'egreso').reduce((s, m) => s + m.monto_bs, 0));
   const resultado_bs = r2(ingresos_bs - egresos_bs);
 
-  // Por categoría
   const porCategoriaMap = {};
   for (const m of movimientos) {
     const k = `${m.tipo}:${m.categoria}`;
@@ -878,7 +874,6 @@ router.get('/contabilidad', (req, res) => {
     porCategoriaMap[k].cantidad++;
   }
 
-  // Resultado mensual por sucursal
   const porSucursal = db.prepare(`
     SELECT
       s.id, s.nombre, s.codigo,
@@ -893,7 +888,6 @@ router.get('/contabilidad', (req, res) => {
     resultado_bs: r2(r.ingresos_bs - r.egresos_bs),
   }));
 
-  // Cuentas por cobrar
   const cuentasPorCobrar = db.prepare(`
     SELECT v.*, s.nombre AS sucursal_nombre
     FROM ventas v
@@ -969,7 +963,6 @@ router.get('/rrhh', (req, res) => {
 
   const totalGeneralBs = r2(trabajadores.reduce((s, t) => s + t.total_ganado_bs, 0));
 
-  // Resumen por sucursal
   const sucursales = db.prepare('SELECT * FROM sucursales WHERE activo = 1 ORDER BY id').all();
   const planillaPorSucursal = sucursales.map(s => {
     const personal = trabajadores.filter(t => t.sucursal_id === s.id);
@@ -1027,7 +1020,6 @@ router.get('/reportes', (req, res) => {
   const filtroP = sucId ? `AND p.sucursal_id = ${Number(sucId)}` : '';
   const filtroC = sucId ? `AND c.sucursal_id = ${Number(sucId)}` : '';
 
-  // 1. Ventas por mes (últimos 12 meses)
   const ventasPorMes = db.prepare(`
     SELECT
       substr(v.fecha, 1, 7) AS mes,
@@ -1040,7 +1032,6 @@ router.get('/reportes', (req, res) => {
     ORDER BY mes ASC
   `).all();
 
-  // 2. Ventas por día de la semana (estacionalidad semanal)
   const diasNombres = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
   const ventasDiaRaw = db.prepare(`
     SELECT
@@ -1061,7 +1052,6 @@ router.get('/reportes', (req, res) => {
     };
   });
 
-  // 3. Productos más y menos vendidos + tendencias/modas nuevas (últimos 60 días vs promedio anterior)
   const productosRanking = db.prepare(`
     SELECT
       m.id, m.codigo, m.nombre, m.categoria, m.stock, m.minimo, m.costo_bs, m.precio_m2_bs,
@@ -1095,7 +1085,6 @@ router.get('/reportes', (req, res) => {
   const menosVendidos = [...productosRanking].sort((a, b) => a.facturado_bs - b.facturado_bs).slice(0, 6);
   const modasTendencias = [...productosRanking].sort((a, b) => b.crecimiento_pct - a.crecimiento_pct).slice(0, 6);
 
-  // 4. Proformas por empleado y tasa de conversión a ventas
   const conversionPorVendedor = db.prepare(`
     SELECT
       p.vendedor_nombre AS vendedor,
@@ -1114,7 +1103,6 @@ router.get('/reportes', (req, res) => {
     tasa_conversion_pct: v.total_proformas > 0 ? r2((v.convertidas / v.total_proformas) * 100) : 0,
   }));
 
-  // 5. Mermas por material y por cortador
   const mermasPorMaterial = db.prepare(`
     SELECT
       c.material_nombre AS material,
@@ -1178,7 +1166,6 @@ router.get('/dueno', (req, res) => {
   const loQueGasteBs = r2(movs.filter(m => m.tipo === 'egreso').reduce((s, m) => s + m.monto_bs, 0));
   const loQueMeQuedaBs = r2(loQueGaneBs - loQueGasteBs);
 
-  // Producción de cada producto (barras simples)
   const produccionProductos = db.prepare(`
     SELECT
       COALESCE(m.nombre, vi.descripcion) AS nombre,
@@ -1188,12 +1175,11 @@ router.get('/dueno', (req, res) => {
     JOIN ventas v ON v.id = vi.venta_id
     LEFT JOIN materiales m ON m.id = vi.material_id
     WHERE substr(v.fecha, 1, 7) = ? AND vi.tipo_item != 'corte_colocacion' ${sucId ? `AND v.sucursal_id = ${sucId}` : ''}
-    GROUP BY nombre
+    GROUP BY COALESCE(m.nombre, vi.descripcion)
     ORDER BY m2 DESC
     LIMIT 6
-  `).all();
+  `).all(mes);
 
-  // Mermas
   const cortes = db.prepare(`
     SELECT * FROM planchas_corte WHERE 1=1 ${filtroSuc}
   `).all();
@@ -1205,12 +1191,11 @@ router.get('/dueno', (req, res) => {
     costo_merma_bs: r2(cortes.reduce((s, c) => s + c.costo_merma_bs, 0)),
   };
 
-  // Qué tengo que comprar
   const queComprar = db.prepare(`
     SELECT id, codigo, nombre, categoria, stock, minimo, costo_bs, proveedor
     FROM materiales
     WHERE activo = 1 AND familia = 'plancha' AND stock < minimo ${filtroSuc}
-    ORDER BY (stock / MAX(1, minimo)) ASC
+    ORDER BY (stock / CASE WHEN minimo > 1 THEN minimo ELSE 1 END) ASC
     LIMIT 6
   `).all().map(m => ({
     ...m,
@@ -1218,7 +1203,6 @@ router.get('/dueno', (req, res) => {
     planchas_comprar: Math.max(2, Math.ceil((m.minimo * 1.4 - m.stock) / 5.1)),
   }));
 
-  // Cómo van mis vendedores (proformas -> ventas)
   const vendedores = db.prepare(`
     SELECT
       vendedor_nombre AS nombre,
@@ -1229,7 +1213,7 @@ router.get('/dueno', (req, res) => {
     WHERE substr(fecha, 1, 7) = ? ${filtroSuc}
     GROUP BY vendedor_nombre
     ORDER BY vendido_bs DESC
-  `).all().map(v => ({
+  `).all(mes).map(v => ({
     ...v,
     conversion_pct: v.proformas > 0 ? Math.round((v.ventas / v.proformas) * 100) : 0,
   }));

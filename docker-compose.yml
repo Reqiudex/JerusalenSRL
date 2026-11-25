@@ -1,11 +1,18 @@
 services:
-  jerusalen-web:
+  jerusalen-erp:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: jerusalen-srl-app
-    restart: always
+    restart: unless-stopped
     ports:
-      - "3030:80"
+      - "${PORT:-3030}:3030"
     environment:
       - NODE_ENV=production
+      - PORT=3030
+      - DATA_DIR=/app/data
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-jerusalen2026}
+      - DUENO_PIN=${DUENO_PIN:-1954}
+      - FECHA_HOY=${FECHA_HOY:-2026-11-25}
+    volumes:
+      - /mnt/disco-lento/jerusalen:/app/data
