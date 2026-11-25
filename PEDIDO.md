@@ -52,3 +52,6 @@ Seed realista boliviano (Santa Cruz, Bs): ~3 sucursales, 20 trabajadores, ~40 ma
 - No tocar otras apps, otras BD ni el túnel (eso lo hace la sesión de infraestructura).
 - Ahorrar tokens: salidas cortas, sin builds repetidos.
 - Al terminar todo: primera línea de ESTADO.md exactamente `ESTADO: TERMINADO`.
+
+## Entregas externas (no duplicar)
+La **interfaz de la matriz de corte** (`MatrizCorte`) y la **app del panel del dueño** (`apps/dueno`) llegarán hechas por separado en `entregas/`. Tú haz la API, la BD y deja las rutas/espacios listos para conectarlas, pero NO construyas esos dos componentes de UI.
