@@ -26,6 +26,8 @@ export const config = {
   cookieSegura: e.COOKIE_SEGURA === '1',
   claveDemo: e.CLAVE_DEMO || 'jerusalen2026',
   pinDemo: e.PIN_DEMO || '2580',
+  // DEMO_SIN_LOGIN=1 habilita /api/demo/* (botones «Entrar sin clave»). Apagar en producción real.
+  demoSinLogin: e.DEMO_SIN_LOGIN === '1',
   servirEstaticos: e.SERVIR_ESTATICOS !== '0',
   diasSesion: Number(e.DIAS_SESION || 14),
 }

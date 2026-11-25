@@ -89,3 +89,7 @@ body { font-size: 20px; line-height: 1.45; }
 .tarjeta-d .g-barra { font-size: 18px; grid-template-columns: minmax(120px, 45%) 1fr auto; }
 .tarjeta-d .g-barra-pista { height: 18px; }
 @media (max-width: 520px) { .tarjeta-d .g-barra { grid-template-columns: 1fr auto; } }
+
+/* «Entrar sin PIN (demo)» (DEMO_SIN_LOGIN=1) */
+.boton-sin-pin { width: min(360px, 100%); min-height: 64px; margin-top: 18px; font: inherit; font-size: 22px; font-weight: 600; border-radius: 14px; border: 2px solid var(--oro, #b08d3c); background: var(--oro, #b08d3c); color: #1a1a1a; cursor: pointer; }
+.boton-sin-pin:disabled { opacity: .6; }

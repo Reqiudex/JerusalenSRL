@@ -16,5 +16,6 @@ services:
       COOKIE_SEGURA: 1
       CLAVE_DEMO: ${CLAVE_DEMO:?falta CLAVE_DEMO}
       PIN_DEMO: ${PIN_DEMO:?falta PIN_DEMO}
+      DEMO_SIN_LOGIN: ${DEMO_SIN_LOGIN:-0}   # 1 = botones «Entrar sin clave (demo)»
     volumes:
       - /mnt/disco-lento/jerusalen:/datos

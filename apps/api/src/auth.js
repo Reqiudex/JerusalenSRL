@@ -123,6 +123,31 @@ export function montarAuth(app, db) {
     res.json({ usuario: usuarioPublico(req.usuario), tipoSesion: req.usuario.tipo_sesion })
   })
 
+  // Acceso demo sin clave: solo existe con DEMO_SIN_LOGIN=1. El rol y el usuario los fija el servidor.
+  if (config.demoSinLogin) {
+    const DEMO_ROLES = [
+      { rol: 'administrador', etiqueta: 'Administrador (Nain)', email: 'nain@jerusalen.demo' },
+      { rol: 'vendedor', etiqueta: 'Vendedor', email: 'carla@jerusalen.demo' },
+      { rol: 'cortador', etiqueta: 'Cortador', email: 'marcelo@jerusalen.demo' },
+      { rol: 'contador', etiqueta: 'Contadora', email: 'patricia@jerusalen.demo' },
+      { rol: 'rrhh', etiqueta: 'RRHH', email: 'fernanda@jerusalen.demo' },
+      { rol: 'dueno', etiqueta: 'Don Emiliano (dueño)', email: 'emiliano@jerusalen.demo' },
+    ]
+    const buscar = (d) =>
+      db.prepare('SELECT u.*, su.nombre AS sucursal FROM usuarios u LEFT JOIN sucursales su ON su.id = u.sucursal_id WHERE u.activo = 1 AND u.email = ? AND u.rol = ?').get(d.email, d.rol) ??
+      db.prepare('SELECT u.*, su.nombre AS sucursal FROM usuarios u LEFT JOIN sucursales su ON su.id = u.sucursal_id WHERE u.activo = 1 AND u.rol = ? ORDER BY u.id LIMIT 1').get(d.rol)
+    app.get('/api/demo/roles', (_req, res) => res.json({ activo: true, roles: DEMO_ROLES.map(({ rol, etiqueta }) => ({ rol, etiqueta })) }))
+    app.post('/api/demo/entrar', manejar((req, res) => {
+      const d = DEMO_ROLES.find((x) => x.rol === String(req.body?.rol ?? ''))
+      if (!d) throw new ErrorHttp(422, 'Rol de demo desconocido.')
+      const u = buscar(d)
+      if (!u) throw new ErrorHttp(404, 'No hay un usuario demo para ese rol.')
+      crearSesion(db, res, u, d.rol === 'dueno' ? 'pin' : 'clave')
+      registrar(db, u.id, 'ingreso demo sin clave')
+      res.json({ usuario: usuarioPublico(u) })
+    }))
+  }
+
   app.post('/api/auth/salir', (req, res) => {
     const token = req.cookies?.[COOKIE]
     if (token) db.prepare('DELETE FROM sesiones WHERE token = ?').run(token)

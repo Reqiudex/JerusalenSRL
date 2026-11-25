@@ -86,3 +86,9 @@
 .mini-barra { height: 8px; border-radius: 4px; background: var(--superficie-2); overflow: hidden; min-width: 80px; display: flex; }
 .mini-barra span { display: block; height: 100%; }
 .mini-barra .v { background: var(--ok); } .mini-barra .r { background: var(--serie-1); } .mini-barra .m { background: var(--peligro); }
+
+/* Botones «Entrar sin clave (demo)» (DEMO_SIN_LOGIN=1) */
+.demo-sin-clave { display: grid; gap: 10px; padding-top: 14px; border-top: 1px solid var(--borde, rgba(0,0,0,.12)); }
+.demo-titulo { margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--oro); font-weight: 600; }
+.boton-demo { min-height: 52px; width: 100%; font-size: 16px; justify-content: center; border: 1px solid var(--oro); background: transparent; color: var(--texto); }
+.boton-demo:hover { background: color-mix(in srgb, var(--oro) 14%, transparent); }

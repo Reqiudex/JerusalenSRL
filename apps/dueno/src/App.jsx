@@ -45,7 +45,7 @@ const I = {
 
 // ───────────────────────── Ingreso con PIN ─────────────────────────
 
-function Ingreso({ alEntrar, alDemo, error, ocupado }) {
+function Ingreso({ alEntrar, alDemo, alSinPin, error, ocupado }) {
   const [pin, setPin] = useState('')
   const enviar = useCallback(() => pin.length >= 4 && alEntrar(pin), [pin, alEntrar])
   const tocar = (d) => setPin((p) => (p.length < 6 ? p + d : p))
@@ -82,6 +82,9 @@ function Ingreso({ alEntrar, alDemo, error, ocupado }) {
           {ocupado ? '…' : 'Entrar'}
         </button>
       </div>
+      {alSinPin ? (
+        <button type="button" className="boton-sin-pin" onClick={alSinPin} disabled={ocupado}>Entrar sin PIN (demo)</button>
+      ) : null}
       <button type="button" className="enlace-demo" onClick={alDemo}>Ver con datos de ejemplo</button>
     </main>
   )
@@ -187,6 +190,25 @@ export default function App() {
     }
   }
 
+  const [sinPin, setSinPin] = useState(false)
+  useEffect(() => {
+    api.demoActivo().then((r) => setSinPin(!!r?.activo)).catch(() => setSinPin(false))
+  }, [])
+  const entrarSinPin = async () => {
+    setOcupado(true)
+    setErrorPin('')
+    try {
+      const r = await api.demoEntrar()
+      setDemo(false)
+      setUsuario(r.usuario)
+      setFase('panel')
+    } catch (e) {
+      setErrorPin(e.message)
+    } finally {
+      setOcupado(false)
+    }
+  }
+
   const salir = async () => {
     if (hayVoz) window.speechSynthesis.cancel()
     if (!demo) await api.salir().catch(() => {})
@@ -206,7 +228,7 @@ export default function App() {
   }
 
   if (fase === 'cargando') return <main className="cargando" aria-busy="true"><p className="marca-grande">JERUSALÉN</p></main>
-  if (fase === 'pin') return <><MarmolFondo /><Ingreso alEntrar={entrar} alDemo={() => { setDemo(true); setFase('panel') }} error={errorPin} ocupado={ocupado} /></>
+  if (fase === 'pin') return <><MarmolFondo /><Ingreso alEntrar={entrar} alDemo={() => { setDemo(true); setFase('panel') }} alSinPin={sinPin ? entrarSinPin : null} error={errorPin} ocupado={ocupado} /></>
 
   const voz = datos ? textosVoz(datos) : null
   const variacion = datos ? textoVariacion(datos.ingresos.variacionPct, datos.mes) : null

@@ -226,3 +226,11 @@ describe('inventario, costos, contabilidad y planilla', () => {
     expect(r.productos.masVendidos.length).toBeGreaterThan(0)
   })
 })
+
+describe('acceso demo apagado', () => {
+  it('sin DEMO_SIN_LOGIN no existe /api/demo/*', async () => {
+    const c = cliente()
+    expect((await c.post('/api/demo/entrar', { rol: 'administrador' })).estado).toBe(404)
+    expect((await c.get('/api/demo/roles')).estado).toBe(404)
+  })
+})

@@ -22,6 +22,8 @@ async function pedir(ruta, opciones = {}) {
 export const api = {
   yo: () => pedir('/api/auth/yo'),
   pin: (pin) => pedir('/api/auth/pin', { method: 'POST', body: JSON.stringify({ pin }) }),
+  demoActivo: () => pedir('/api/demo/roles'),
+  demoEntrar: () => pedir('/api/demo/entrar', { method: 'POST', body: JSON.stringify({ rol: 'dueno' }) }),
   salir: () => pedir('/api/auth/salir', { method: 'POST', body: '{}' }),
   resumen: (mes, sucursal) => pedir(`/api/dueno/resumen?mes=${encodeURIComponent(mes)}${sucursal ? `&sucursal=${sucursal}` : ''}`),
 }
