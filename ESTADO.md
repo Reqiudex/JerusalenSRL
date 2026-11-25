@@ -13,11 +13,16 @@
 - **Qué se hizo:** Calculadora de producción y costos por proyecto (`ProduccionView.jsx`), matriz de corte visual interactiva con soporte táctil en tablet (`MatrizCorteView.jsx`) e inventario con retazos y lista de qué comprar (`InventarioView.jsx`).
 
 ## Etapa 5: Contabilidad + RRHH/planilla — COMPLETADA
+- **Qué se hizo:** Contabilidad simple con ingresos/egresos, resultado mensual por sucursal y cuentas por cobrar (`ContabilidadView.jsx`); RRHH con sucursales, 20 trabajadores, antigüedad automática y planilla mensual (`RrhhView.jsx`).
+
+## Etapa 6: Reportes/gráficas + panel del dueño (adminj) — COMPLETADA
 - **Qué se hizo:**
-  - `apps/erp/src/views/ContabilidadView.jsx`: Ingresos (ventas y cobros) y egresos (compras de planchas en Brasil, planilla, insumos/discos, servicios), resultado mensual consolidado y desglosado por cada una de las 3 sucursales, libro de movimientos y cuentas por cobrar.
-  - `apps/erp/src/views/RrhhView.jsx`: Gestión de sucursales/fábricas (alta y edición), nómina de 20 trabajadores por sucursal con fecha de ingreso, cargo, haber básico, cálculo automático de antigüedad y bono de antigüedad, y planilla mensual general y por sucursal (~53.000 Bs/mes).
+  - `apps/erp/src/views/ReportesView.jsx`: Gráficas y reportes de evolución mensual de ventas (12 meses con estacionalidad), ventas por día de la semana, producto más exitoso y menos vendido, tendencias/modas nuevas (crecimiento reciente de Piedra Sinterizada vs promedio histórico), recomendación de cuánto comprar, proformas por empleado con tasa de conversión a ventas, y mermas por material y por cortador.
+  - `apps/erp/src/views/AjustesView.jsx`: Gestión de usuarios y roles por el administrador + botón para reiniciar la demo.
+  - `apps/erp/src/ErpApp.jsx`: Integración completa de los 9 módulos del ERP, login con selector rápido de usuarios demo y filtrado por sucursal según permisos del rol.
+  - `apps/dueno/src/DuenoApp.jsx`: Panel súper simplificado de pantalla única para Don Emiliano Acero (`adminj.cerice360.com`), ingreso con PIN de 4–6 dígitos (`1954`) y teclado táctil grande, letra >= 20px, alto contraste, tarjetas **Lo que gané este mes**, **Lo que gasté**, **Lo que me queda**, **Producción de cada producto**, **Mermas**, **Qué tengo que comprar**, **Cómo van mis vendedores**, selector de mes con flechas, selector de sucursal y botón **Leer en voz alta** (Web Speech API).
 - **Cómo probar:**
-  - En el ERP (`erpj`), abrir **Contabilidad Simple** (cambiar mes o registrar gasto/ingreso) y **RRHH y Planilla** (ver planilla por sucursal, editar sede o incorporar trabajador).
+  - En `erpj` (`http://localhost:3030`), iniciar sesión como `nain@jerusalensrl.com` / `jerusalen2026` y recorrer todos los módulos.
+  - En `adminj` (`http://localhost:3030/?app=dueno` o hostname `adminj.*`), ingresar con el PIN `1954`.
 - **Qué falta:**
-  - Etapa 6: Reportes/gráficas + panel del dueño (`adminj`) e integración completa de vistas en `ErpApp.jsx`.
-  - Etapa 7: Pruebas automatizadas y `Dockerfile` / `docker-compose.yml`.
+  - Etapa 7: Suite de pruebas automatizadas (`npm test`), actualización de `Dockerfile` y `docker-compose.yml` listos para despliegue y verificación final de `npm run build`.
