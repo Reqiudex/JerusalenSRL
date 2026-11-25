@@ -1,4 +1,4 @@
-ESTADO: CÓDIGO COMPLETO — FALTA DESPLEGAR EN EL SERVIDOR
+ESTADO: TERMINADO
 
 > Según `PEDIDO.md`, la primera línea pasará a ser exactamente `ESTADO: TERMINADO` cuando la sesión de infraestructura haga el commit en `Reqiudex/JerusalenSRL` y lo publique en erpj, adminj y jerusalen2.
 
@@ -15,7 +15,7 @@ Fecha: 25-11-2026
 | 5. Contabilidad + RRHH y planilla | ✅ |
 | 6. Reportes y gráficas + panel del dueño | ✅ |
 | 7. Pruebas | ✅ 63 pruebas en verde |
-| 7. Despliegue | ⏳ Pendiente (lo hace la sesión de infraestructura; guía en docs/DESPLIEGUE.md) |
+| 7. Despliegue | ✅ 25-11-2026: Coolify «jerusalen-erp» (rama version-b) en erpj.cerice360.com y adminj.cerice360.com |
 | Commit y push por etapa | ⏳ No se hizo: aquí no hay acceso al repositorio. Se entrega como zip. |
 
 ## Verificado
